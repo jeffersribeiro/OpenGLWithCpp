@@ -2,6 +2,25 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "build active file",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "${file}",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Compile with g++"
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: g++.exe build active file",
             "command": "C:/msys64/mingw64/bin/g++.exe",
@@ -14,7 +33,7 @@
                 "${workspaceFolder}/src/glad.c",
                 "-lglfw3dll",
                 "-o",
-                "${workspaceFolder}/cutable.exe"
+                "${workspaceFolder}/main.exe"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
