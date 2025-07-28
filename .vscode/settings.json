@@ -1,5 +1,14 @@
 {
+    "[glsl]": {
+        "editor.defaultFormatter": null,
+        "editor.formatOnSave": false
+    },
+    "[plaintext]": {
+        "editor.defaultFormatter": null
+    },
     "files.associations": {
+        "*.vert": "glsl",
+        "*.frag": "glsl",
         "atomic": "cpp",
         "bit": "cpp",
         "cctype": "cpp",
