@@ -39,6 +39,6 @@ Ele está centralizado horizontalmente
 
 O OpenGL usa por padrão o espaço de coordenadas normalizado (NDC), que vai de -1 a 1 nos eixos X e Y
 
-![alt text](ndc.png)
+![alt text](./imgs/ndc.png)
 
-![alt text](opengl_pipelines_flowgraph.png)
+![alt text](./imgs/opengl_pipelines_flowgraph.png)
