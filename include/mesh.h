@@ -6,13 +6,14 @@
 class Mesh
 {
 public:
-    Mesh(float vetices[9], const std::string &fragPath);
+    Mesh(float vertices[], const std::string &fragPath);
 
     void draw();
     void load();
     void dispose();
 
 private:
+    int _vertexCount;
     unsigned int VAO, VBO;
     float *_vertices;
     Shader _shader;

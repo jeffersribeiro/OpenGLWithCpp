@@ -48,19 +48,20 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     float triangle1[] = {
-        -1.0f, -0.5f, 0.0f, // V0
-        -0.5f, -0.5f, 0.0f, // V1
-        -0.5f, 0.5f, 0.0f   // V2
+        // positions       // colors
+        -1.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // V0₁ — canto inferior esquerdo
+        -0.1f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // V1₁ — centro inferior
+        -0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f   // V2₁ — topo esquerdo
     };
 
     float triangle2[] = {
-        0.0f, -0.5f, 0.0f, // V0
-        0.0f, -0.5f, 0.0f, // V1
-        0.5f, 0.5f, 0.0f   // V2
+        0.3f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // V0₂ — centro inferior
+        1.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // V1₂ — canto inferior direito
+        0.5f, 0.7f, 0.0f, 0.0f, 0.0f, 1.0f   // V2₂ — topo direito
     };
 
-    Mesh greenTriangle(triangle1, "shaders/green_shader.frag");
-    Mesh blueTriangle(triangle2, "shaders/blue_shader.frag");
+    Mesh greenTriangle(triangle1, "shaders/fragment.glsl");
+    Mesh blueTriangle(triangle2, "shaders/fragment.glsl");
 
     greenTriangle.load();
     blueTriangle.load();
