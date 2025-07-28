@@ -1,27 +1,29 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <shader.h>
+#include <fstream>
+#include <sstream>
+#include <string>
 
-const char *vertexShaderSource = "#version 330 core\n"
-                                 "layout (location = 0) in vec3 aPos;\n"
-                                 "void main()\n"
-                                 "{\n"
-                                 "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-                                 "}\0";
-
-const char *fragmentShaderSource = "#version 330 core\n"
-                                   "out vec4 FragColor;\n"
-                                   "void main()\n"
-                                   "{\n"
-                                   "    FragColor = vec4(1.0f,0.5f,0.2f,1.0f);\n"
-                                   "}\0";
-
-int shader()
+std::string loadShaderSource(const std::string &filePath)
 {
-    unsigned int vertexShader;
+    std::ifstream file(filePath);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
+Shader::Shader(const std::string &vertPath, const std::string &fragPath)
+{
+    shaderProgram;
+    vertexShader;
+    fragmentShader;
+
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    std::string vertCode = loadShaderSource(vertPath);
+    const char *vertSrc = vertCode.c_str();
+    glShaderSource(vertexShader, 1, &vertSrc, nullptr);
     glCompileShader(vertexShader);
 
     int success;
@@ -34,9 +36,11 @@ int shader()
                   << infoLog << std::endl;
     }
 
-    unsigned int fragmentShader;
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+
+    std::string fragCode = loadShaderSource(fragPath);
+    const char *fragSrc = fragCode.c_str();
+    glShaderSource(fragmentShader, 1, &fragSrc, nullptr);
     glCompileShader(fragmentShader);
 
     glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
@@ -47,12 +51,24 @@ int shader()
                   << infoLog << std::endl;
     }
 
-    unsigned int shaderProgram;
     shaderProgram = glCreateProgram();
 
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
+
     glLinkProgram(shaderProgram);
+
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
+
+void Shader::useProgram()
+{
+
+    int success;
+    char infoLog[512];
+
+    glUseProgram(shaderProgram);
 
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success)
@@ -61,8 +77,9 @@ int shader()
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
                   << infoLog << std::endl;
     }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+}
 
-    return shaderProgram;
+void Shader::deleteProgram()
+{
+    glDeleteProgram(shaderProgram);
 }

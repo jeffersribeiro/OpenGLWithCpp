@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <shader.h>
+#include <mesh.h>
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
@@ -46,51 +47,40 @@ int main()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // V0: canto inferior esquerdo
-        0.5f, -0.5f, 0.0f,  // V1: canto inferior direito
-        0.0f, 0.5f, 0.0f    // V2: topo central
+    float triangle1[] = {
+        -1.0f, -0.5f, 0.0f, // V0
+        -0.5f, -0.5f, 0.0f, // V1
+        -0.5f, 0.5f, 0.0f   // V2
     };
 
-    unsigned int VBO, VAO; // Vertex Buffer Objects and Vertex Array Objects
+    float triangle2[] = {
+        0.0f, -0.5f, 0.0f, // V0
+        0.0f, -0.5f, 0.0f, // V1
+        0.5f, 0.5f, 0.0f   // V2
+    };
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO); // gera o buffer com um ID
+    Mesh greenTriangle(triangle1, "shaders/green_shader.frag");
+    Mesh blueTriangle(triangle2, "shaders/blue_shader.frag");
 
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);                                        // liga e define o tipo do buffer com o Array de buffers GL
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // copia os dados da vertice para buffer(VBO)
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    int shaderProgram = shader();
+    greenTriangle.load();
+    blueTriangle.load();
 
     while (!glfwWindowShouldClose(window))
     {
-        // input
         processInput(window);
 
-        // rendering commands here
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        greenTriangle.draw();
+        blueTriangle.draw();
 
-        // chack and call evenrs and swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    greenTriangle.dispose();
+    blueTriangle.dispose();
 
     glfwTerminate();
     return 0;
