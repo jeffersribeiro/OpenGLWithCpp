@@ -58,7 +58,13 @@ int main()
 
     Mesh greenTriangle(triangle1, "shaders/fragment.glsl");
 
+    std::vector<std::string> paths = {
+        "assets/container_texture.png",
+        "assets/smile_emoji.png",
+    };
+
     greenTriangle.load();
+    greenTriangle.setTextures(paths);
     greenTriangle.loadTexture();
 
     while (!glfwWindowShouldClose(window))

@@ -2,6 +2,8 @@
 #define MESH_H
 
 #include <shader.h>
+#include <vector>
+#include <string>
 
 class Mesh
 {
@@ -11,6 +13,7 @@ public:
     void draw();
     void load();
     void dispose();
+    void setTextures(const std::vector<std::string> &texPaths);
     void loadTexture();
 
 private:
@@ -20,7 +23,8 @@ private:
     float *_vertices;
     float *_texCords;
     Shader _shader;
-    unsigned int texture;
+    std::vector<unsigned int> _textures;
+    std::vector<std::string> _texPaths;
 };
 
 #endif

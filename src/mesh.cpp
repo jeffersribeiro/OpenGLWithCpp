@@ -5,6 +5,9 @@
 #include <shader.h>
 #include <stb_image.h>
 #include <cmath>
+#include <vector>
+#include <string>
+#include <stdexcept>
 
 Mesh::Mesh(float *vertices, const std::string &fragPath)
     : _shader("shaders/vertex.glsl", fragPath.c_str())
@@ -41,7 +44,7 @@ void Mesh::load()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // teexture attribute
+    // texture coord attribute
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
@@ -50,41 +53,62 @@ void Mesh::load()
 
 void Mesh::draw()
 {
-    glBindTexture(GL_TEXTURE_2D, texture);
+
+    for (size_t i = 0; i < _textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + static_cast<int>(i));
+        glBindTexture(GL_TEXTURE_2D, _textures[i]);
+    }
 
     _shader.useProgram();
-
-    _shader.setFloat("xOffset", 0.05f);
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
+void Mesh::setTextures(const std::vector<std::string> &texPaths)
+{
+    _texPaths = texPaths;
+}
+
 void Mesh::loadTexture()
 {
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    if (_texPaths.empty())
+        throw std::runtime_error("Textures path not set");
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    _textures.resize(_texPaths.size());
 
-    int width, height, nrChannels;
-    const std::string texPath = "assets/container_texture.png";
-    unsigned char *data = stbi_load(texPath.c_str(), &width, &height, &nrChannels, 0);
-
-    if (data)
+    for (size_t i = 0; i < _texPaths.size(); ++i)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
+        glGenTextures(1, &_textures[i]);
+        glBindTexture(GL_TEXTURE_2D, _textures[i]);
 
-    stbi_image_free(data);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        int width, height, nrChannels;
+        stbi_set_flip_vertically_on_load(true);
+        unsigned char *data = stbi_load(_texPaths[i].c_str(), &width, &height, &nrChannels, 0);
+
+        if (data)
+        {
+            GLenum format = (nrChannels == 4 ? GL_RGBA : GL_RGB);
+            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture: " << _texPaths[i] << std::endl;
+        }
+        stbi_image_free(data);
+
+        // Define o sampler no shader
+        _shader.useProgram();
+        std::string texName = "texture" + std::to_string(i);
+        _shader.setInt(texName, static_cast<int>(i));
+    }
 }
 
 void Mesh::dispose()
