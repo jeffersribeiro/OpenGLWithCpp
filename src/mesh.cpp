@@ -38,6 +38,8 @@ void Mesh::draw()
 {
     _shader.useProgram();
 
+    _shader.setFloat("xOffset", 0.05f);
+
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 }
