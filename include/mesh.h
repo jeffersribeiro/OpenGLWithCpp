@@ -11,12 +11,16 @@ public:
     void draw();
     void load();
     void dispose();
+    void loadTexture();
 
 private:
     int _vertexCount;
-    unsigned int VAO, VBO;
+    unsigned int VAO, VBO, EBO;
+
     float *_vertices;
+    float *_texCords;
     Shader _shader;
+    unsigned int texture;
 };
 
 #endif

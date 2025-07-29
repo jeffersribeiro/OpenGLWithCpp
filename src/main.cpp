@@ -47,16 +47,19 @@ int main()
     glViewport(0, 0, 800, 600);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    // clang-format off
     float triangle1[] = {
-        // positions       // colors
-        -1.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // V0₁ — canto inferior esquerdo
-        -0.1f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // V1₁ — centro inferior
-        -0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f   // V2₁ — topo esquerdo
+        // positions          // colors           // texture coords
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
     };
 
     Mesh greenTriangle(triangle1, "shaders/fragment.glsl");
 
     greenTriangle.load();
+    greenTriangle.loadTexture();
 
     while (!glfwWindowShouldClose(window))
     {
