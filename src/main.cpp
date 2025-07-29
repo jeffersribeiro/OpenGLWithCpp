@@ -54,17 +54,9 @@ int main()
         -0.5f, 0.3f, 0.0f, 0.0f, 0.0f, 1.0f   // V2₁ — topo esquerdo
     };
 
-    float triangle2[] = {
-        0.3f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // V0₂ — centro inferior
-        1.0f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // V1₂ — canto inferior direito
-        0.5f, 0.7f, 0.0f, 0.0f, 0.0f, 1.0f   // V2₂ — topo direito
-    };
-
     Mesh greenTriangle(triangle1, "shaders/fragment.glsl");
-    Mesh blueTriangle(triangle2, "shaders/fragment.glsl");
 
     greenTriangle.load();
-    blueTriangle.load();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -74,14 +66,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         greenTriangle.draw();
-        blueTriangle.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     greenTriangle.dispose();
-    blueTriangle.dispose();
 
     glfwTerminate();
     return 0;
